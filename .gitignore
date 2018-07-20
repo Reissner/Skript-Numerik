@@ -1,0 +1,14 @@
+# emacs
+*/*~
+/*~
+# pdflatex
+/*.aux
+/*.log
+/*.out
+/*.toc
+/*.idx
+/*.pdf
+/*.synctex.gz
+# bibliography
+/*.bbl
+/*.blg
