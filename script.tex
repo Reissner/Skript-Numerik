@@ -1,0 +1,724 @@
+\RequirePackage[orthodox]{nag}
+
+\documentclass[index=totoc]{scrartcl}%{article}
+
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{caption3}
+\usepackage[pdftex]{graphicx}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{srcltx}%\usepackage{url}
+\usepackage{rerunfilecheck}
+
+
+\usepackage{glossaries}
+\usepackage{makeidx}
+
+% to be loaded last 
+\usepackage[pdftex,bookmarks=true,bookmarksnumbered=true,hypertexnames=false,breaklinks=true,linkbordercolor={0 0 1},verbose]
+{hyperref}
+\hypersetup{pdfauthor={Ernst Reissner},pdftitle={Nuetzliche Mathematik},pdfsubject={LA Analysis und Numerik},bookmarksopen=true}
+
+\pdfadjustspacing=1
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\makeindex
+
+\newtheorem{thm}{Satz}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Korollar}
+
+\theoremstyle{definition}
+\newtheorem{defi}{Definition}[section]
+\newtheorem{bem}[defi]{Bemerkung}
+\newtheorem{bemn}[defi]{Bemerkungen}
+\newtheorem{bsp}[defi]{Beispiel}
+\newtheorem{bspe}[defi]{Beispiele}
+\newtheorem{afg}[defi]{Aufgabe}
+
+\newcommand{\N}{\mathbb N}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\Hd}{\mathbb H}
+
+
+\DeclareMathOperator{\spann}{span}
+
+\title{Nützliche Mathematik}
+\author{Ernst Reißner}
+
+\begin{document}
+%\frontmatter
+\maketitle
+\pdfbookmark[1]{Contents}{toc}
+
+\tableofcontents
+
+\section{Einführung}
+
+Dieser Artikel ist eine Sammlung von mathematischem Hintergrund,
+den wir mal für konkrete Projekte gebraucht haben,
+also eigentlich aus der Numerischen Mathematik.
+Erst einmal ist es eine lockere Sammlung von Sätzen.
+
+Nach ein paar Worten zu Mengen in Abschnitt \ref{sec:setsBasics}
+beginnen wir in Abschnitt \ref{sec:laBasics}
+mit Grundlagen aus der Linearen Algebra,
+fügen dann in Abschnitt \ref{sec:anaBasics} die Grundlagen aus der Analysis an,
+immer nur das was wir wirklich brauchen.
+
+Alle weiteren Abschnitte behandeln je ein Thema aus der Numerik.
+Derzeit haben wir nur einen Abschnitt:
+den über Iterationsverfahren.
+
+\newpage
+\section{Grundlagen Mengenlehre}
+\label{sec:setsBasics}
+
+Erst mal geht es da um Mengen, beginnend mit der leeren Menge. 
+Wir sollten da $\N$, $\Z$ und $\Q$ einführen.
+Da gehören auch Relationen dazu.
+Auch Abbildungen und Familien werden gebraucht. 
+
+\section{Grundlagen Lineare Algebra}
+\label{sec:laBasics}
+
+In der linearen Algebra geht es im Wesentlichen um Vektorräume
+das sind Mengen mit deren Elementen, den Vektoren, man rechnen kann 
+und um diverse (lineare) Abbildungen zwischen den Vektorräumen,
+die diese Rechnungen "`erhalten"'.
+
+In der Numerik relevante Beispiele sind der $\R^n$
+sowie Funktionenräume, wie der Raum der Polynome
+oder der Raum der stetigen Funktionen.
+In Vektorräumen kann man rechnen, wie man es im $\R^n$ gewöhnt ist. 
+
+Um Vektorräume verstehen zu können, müssen wir erst Gruppen behandeln, 
+da Vektorräume auch Gruppen sind.
+Zudem können Vektoren auch mit Skalaren multipliziert werden,
+wobei diese Skalare einen Körper bilden.
+Im Wesentlichen kommen nur die Körper $\R$ der reellen Zahlen
+und $\C$ der komplexen Zahlen vor.
+Wir betrachten auch noch die Quaternionen $\Hd$,
+die einen Schiefkörper aber keinen Körper bilden.
+
+
+
+\subsection{Gruppen, Körper und Schiefkörper}
+\label{sec:grpField}
+
+\begin{defi}\index{Verknüpfung}
+  Eine {\em Verknüpfung} auf einer Menge $M$
+  ist eine Abbildung  $\circ\colon M\times M\to M$,
+  die man in Infix-Schreibweise $m\circ m'$ notiert,
+  statt in Präfix-Schreibweise $\circ(m, m')$.
+
+  Auch Abbildungen $\circ\colon M\times M'\to M''$
+  mit verschiedenen Mengen $M$, $M'$, $M''$ werden als Verknüpfung geschrieben.
+
+  Als Verknüpfungszeichen sind neben $\circ$,
+  die Zeichen $\cdot$ und $+$ am beliebtesten. 
+  Wo möglich läßt man die das Zeichen $\cdot$
+  für multiplikative Verknüpfung weg,
+  also schreibt man $ab$ statt $a\cdot b$.
+
+  Die Auswertungsreihenfolge wird über Klammern beschrieben.
+  Treten die Zeichen $\cdot$ und $+$ in einem Ausdruck auf,
+  so kann man mit der Regel "`Punkt vor Strich"' Klammern auch weglassen.
+  Bei gleichen Zeichen
+  kann man die Klammern mit der Regel "`links nach Rechts"' weglassen. 
+\end{defi}
+
+\begin{bspe}
+  Hier drei sehr unterschiedliche Verknüpfungen:
+  %
+  \begin{itemize}
+  \item
+  Die Addition $+$ und die Multiplikation $\cdot$ auf den reellen Zahlen $\R$
+  sind Verknüpfungen.
+  \item
+  Ist $X$ eine Menge und $M$ die Menge der Abbildungen $X\to X$,
+  dann ist die Hintereinanderausführung $\circ$ eine Verknüpfung auf $M$.
+  \item
+    Die Skalarmultiplikation auf $\R^n$ ist eine Verknüpfung
+    %
+    \begin{eqnarray*}
+      \R\times\R^n&\to&\R^n \\
+      \alpha\cdot
+      \left(\begin{array}{c}x_1\\\vdots\\x_n\end{array}\right)
+                  &=&
+      \left(
+      \begin{array}{c}\alpha\cdot x_1\\\vdots\\\alpha\cdot x_n\end{array}
+      \right).
+    \end{eqnarray*}
+  \end{itemize}
+\end{bspe}
+
+\begin{defi}[Gruppe]
+  \index{Gruppe}\index{Gruppe!kommutative}\index{Gruppe!Abel'sche}
+  \index{Element!inverses} \index{Element!negatives}\index{Element!neutrales}
+  \index{assoziativ}\index{kommutativ}
+  Eine {\em Gruppe} $(G,\circ)$ ist eine Menge $G$
+  versehen mit einer Verknüpfung $\circ\colon G\times G\to G$
+  so dass gilt
+  %
+  \begin{itemize}
+  \item
+    Es gibt ein Element $e\in G$, so dass gilt $e\circ g=g\circ e=g$
+    für alle $g\in G$.
+    Dabei heißt $e$ das {\em neutrale Element} von $G$.
+  \item
+    Zu jedem $g\in G$ gibt es ein Element $g'\in G$
+    so dass gilt $g\circ g'=g'\circ g=e$.
+    Dieses Element heißt das {\em inverse Element} zu $g$. 
+  \item
+    Für beliebige $g,g', g''\in G$ gilt
+    $(g\circ g')\circ g''=g\circ (g'\circ g'')$.
+    Man sagt $\circ$ ist {\em assoziativ}. 
+  \end{itemize}
+
+  Eine Gruppe heißt {\em kommutativ} oder {\em Abel'sch},
+  wenn $g\circ g'=g'\circ g$ gilt für alle $g, g'\in G$.
+
+  Wenn die Verknüpfung $\cdot$ geschrieben wird,
+  dann spricht man von einer {\em multiplikativen Gruppe}.
+  Das neutrale Element heißt dann {\em Einselement} und wird als $1$ geschrieben
+  und das zu $g\in G$ inverse Element wird dann als $g^{-1}$ geschrieben.
+
+  Nur für kommutative Gruppen wird die Verknüpfung $+$ geschrieben.
+  Dann spricht man von einer {\em additiven Gruppe}.
+  Das neutrale Element heißt dann {\em Nullelement} und wird als $0$ geschrieben
+  und das zu $g\in G$ inverse Element heißt dann {\em negatives Element}
+  und wird dann als $-g$ geschrieben.
+\end{defi}
+
+\begin{bem}
+  Das neutrale Element einer Gruppe $(G, \cdot)$ ist immer eindeutig,
+  denn für zwei neutrale Elemente $e,e'\ G$ gilt $e=ee'=e'$.
+  
+  Das inverse des neutralen Elements ist das neutrale Element selbst.
+  Auch das inverse Element ist eindeutig bestimmt.
+  %Das linksinverse ist gleich dem rechtsinversen. 
+\end{bem}
+
+\begin{bspe}
+  Folgende sind die wichtigsten Beispiele für Gruppen. 
+  \begin{itemize}
+  \item
+    Die kleinste Gruppe ist die, die nur ein neutrales Element enthält:
+    $(\{1\}, \cdot)$ bzw. $(\{0\}, +)$.
+    Diese Gruppe ist natürlich kommutativ.
+    Die leere Menge ist keine Gruppe. 
+  \item
+    Eine Gruppe  $(G, \cdot)$ mit zwei Elementen muss neben dem neutralen
+    ein weiteres Element $g\in G$ enthalten, das eben nicht neutral ist.
+    Das inverse zu $g$ kann nicht $1$ sein, muss also $g$ selbst sein:
+    $gg=1$.
+    Damit ist die Gruppe und die Verknüpfung eindeutig festgelegt
+    und natürlich ist sie kommutativ.
+    Diese Gruppe ist in $\R$ eingebettet als $(\{\pm1\},\cdot)$. 
+  \item
+    Die $(\R,+)$ ist eine (kommutative) additive Gruppe und
+    $(\R\setminus\{0\},\cdot)$ ist eine multiplikative,
+    ebenfalls kommmutative Gruppe.
+    Das gleiche gilt noch für $\C$.
+  \item
+    $(\Z,+)$ ist die kleinste Gruppe, die $\N$ enthält;
+    insbesondere ist $\N$ keine Gruppe. 
+  \item
+    $(\Q,+)$ und $(\Q\setminus\{0\}, \cdot)$ sind auch kommutative Gruppen.
+  \item
+    Definiert man die Addition auf $\R^n$ komponentenweise,
+    dann ist auch  $(\R^n,+)$ ist eine (kommutative) additive Gruppe. 
+  \item
+    Ist $X$ irgendeine Menge und
+    $F(X,\R^n)$ die Menge aller Funktionen $X\to\R^n$
+    und $+$ die punktweise Addition, also für $f,g\in F(X,\R^n)$ sei
+    %
+    \begin{eqnarray*}
+      (f+g)(x)&=&f(x)+g(x)
+    \end{eqnarray*}
+    dann ist auch $(F(X, R^n), +)$ eine Gruppe. 
+  \item
+    Ist $G$ die Menge der Funktionen $X\to X$,
+    wobei $X$ eine beliebige Menge sei, und bezeichne $\circ$
+    die Hintereinanderaussführung,
+    dann bildet $(G, \circ)$ eine Gruppe,
+    die im allgemeinen nicht kommutativ ist. 
+    Für spezielles $X$ oder für geeignete Teilmengen $G$
+    der Funktionen $X\to X$ kann die Gruppe wieder kommutativ sein. 
+  \end{itemize}
+\end{bspe}
+
+
+\begin{bem}
+  Ist $(G, \circ)$ eine Gruppe, deren Verknüpfung klar ist,
+  dann sagt man schlicht, dass $G$ eine Gruppe ist.
+  Das ist bei $\R^n$ klar und auch oft bei Funktionengruppen. 
+\end{bem}
+
+
+\begin{defi}
+  \index{Körper}
+  \index{distributiv}
+  Ein {\em Körper} $(K, +, \cdot)$ ist eine Menge $K$,
+  versehen mit zwei Verknüpfungen $+$ und $\cdot$, beide $K\times K\to K$,
+  so dass
+  %
+  \begin{itemize}
+  \item
+    $(K,+)$ ist eine (kommutative) Gruppe, 
+  \item
+    $(K\setminus\{0\},\cdot)$ ist eine kommutative Gruppe,
+  \item
+    es gilt das {\em Distributivgesetz}
+    %
+    \begin{eqnarray*}
+      a\cdot(b+c) &=& a\cdot b+a\cdot c. 
+    \end{eqnarray*}
+  \end{itemize}
+\end{defi}
+
+\begin{bemn}
+  Man beachte, dass die multiplikative Gruppe ohne $0$ ist.
+  Es gilt nämlich nach Korollar \ref{cor:factor0K} $0x=0$ für alle $x\in K$. 
+  Die $0$ hat also kein multiplikatives Inverses.
+  
+  In der numerischen Mathematik kommen eigentlich nur zwei Körper vor:
+  $\R$ und $\C$.
+  Es gibt noch den Hamiltonschen Schiefkörper $\Hd$,
+  aber das ist kein Körper, nur ein sogenannter Schiefkörper.
+  Schiefkörper betrachten wir hier nicht.
+
+  In allen Fällen sind die Verknüpfungen klar,
+  so dass man einfach vom Körper $\R$ oder $\C$ spricht.
+\end{bemn}
+
+\begin{cor}\label{cor:factor0K}
+  Ist $(K, +, \cdot)$ ein Körper, dann gilt für $a,b\in K$
+  %
+  \begin{eqnarray*}
+    ab=0 & \iff & a=0\text{ oder }b=0. 
+  \end{eqnarray*}
+\end{cor}
+
+\begin{proof}
+  Es gilt
+  %
+  \begin{equation*}
+    0b+0b=(0+0)b=0b=0+0b\text{ und damit }0b=0.
+  \end{equation*}
+  %
+  und analog $a0=0$.
+  Ist umgekehrt $ab=0$ und $b\not=0$,
+  dann kann man mit dem Inversen von $b$ multiplizieren
+  und erhält $a=a1=abb^{-1}=0b^{-1}=0$.
+  (Analog: Ist $a\not=0$, so ist $b=0$, was aber nicht bewiesen werden muss. )
+\end{proof}
+
+
+
+\subsection{Vektorräume}
+\label{subsec:vectorspace}
+
+Die zentralen Mengen um die es in der linearen Algebra geht,
+sind Vektorräume.
+
+
+\begin{defi}[Vektorraum]
+  \index{Vektorraum}
+  \index{Vektor}
+   \index{Nullvektor}
+  \index{Skalar}
+  \index{Vektormultiplikation}
+  \index{Skalarmultiplikation}
+  Sei $(V,+)$ eine (kommutative) Gruppe, $(K,\oplus,\odot)$ ein Körper
+  und $\cdot\colon K\times V\to V$ eine weitere Verknüpfung so dass gilt: 
+  %
+  \begin{itemize}
+  \item
+    $\alpha\cdot(u+v)=\alpha\cdot u+\alpha\cdot v$
+    für $\alpha\in K$, $u,v\in V$
+  \item 
+    $(\alpha\oplus \beta)\cdot v=\alpha\cdot v+\beta\cdot v$
+    für $\alpha,\beta\in K$, $v\in V$
+  \item
+    $(\alpha\odot\beta) \cdot v = \alpha \cdot (\beta \cdot v)$
+    für $\alpha,\beta\in K$, $v\in V$
+  \item 
+    $1 \cdot v = v$ für $1\in K$, $v\in V$ (Neutralität des Einselements)
+  \end{itemize}
+
+  Dann heißt $(V,+,\cdot)$ ein {\em $K$-Vektorraum},
+  ein {\em Vektorraum über $K$}, oder kurz ein {\em Vektorraum}.
+
+  Die Elemente von $K$ heißen {\em Skalare},
+  die Elemente von $V$ heißen {\em Vektoren}.
+  Vektoren werden mit lateinischen Buchstaben geschrieben,
+  Skalare hingegen mit griechischen.
+  Man unterscheidet zwischen dem Skalar $0\in K$
+  und dem {\em Nullvektor} $0\in V$. 
+  Die Addition im Vektorraum heißt {\em Vektoraddition},
+  die Multiplikation von Skalar und Vektor heißt {\em Skalarmultiplikation}. 
+\end{defi}
+
+\begin{bem}
+  In aller Regel schreibt man sowohl die Vektoraddition
+  als auch die addition im Körper als $+$,
+  und entsprechend sowohl die Skalarmultiplikation
+  als auch die Multiplikation im Körper als $\cdot$.
+  Wie die Bedingungen in der Definition illustrieren,
+  geht die Verknüpfung aus dem Kontext hervor. 
+\end{bem}
+
+\begin{cor}\label{cor:factor0V}
+  Ist $(V, +, \cdot)$ ein Vektorraum über einem Körper $K$,
+  dann gilt für $\alpha\in K$ und $v\in V$
+  %
+  \begin{eqnarray*}
+    \alpha v=0 & \iff & \alpha=0\text{ oder }v=0. 
+  \end{eqnarray*}
+\end{cor}
+
+\begin{proof}
+  Der Beweis ist formal wie der von Korrolar \ref{cor:factor0K},
+  bis auf den letzten Satz, der aber nicht benötigt wird. 
+\end{proof}
+
+\begin{bspe}
+  Sei immer $K=\R$. Der weitaus wichtigste $\R$-Vektorraum für uns ist $\R^n$,
+  wobei die Vektoraddition und die Skalarmultiplikation
+  komponentenweise über Adddition und Multiplikation auf $\R$ definiert sind.
+  %
+  \begin{eqnarray*}
+    \left(\begin{array}{c}x_1    \\\vdots\\x_n    \end{array}\right)+
+    \left(\begin{array}{c}    y_1\\\vdots\\    y_n\end{array}\right)=
+    \left(\begin{array}{c}x_1+y_1\\\vdots\\x_n+y_n\end{array}\right)
+    &\text{ und }&
+    \alpha\cdot
+    \left(
+    \begin{array}{c}            x_1\\\vdots\\           x_n\end{array}\right)=
+    \left(
+    \begin{array}{c}\alpha\cdot x_1\\\vdots\\\alpha\cdot x_n\end{array}\right).
+  \end{eqnarray*}
+
+  Auch die Menge $C([0,1])$ der stetigen Funktionen $[0,1]\to\R$
+  bildet einen Vektorraum,
+  wenn Vektoraddition (Funktionsaddition) und Skalarmultiplikation
+  punktweise durch Addition und Multiplikation auf $\R$  definiert sind:
+  % 
+  \begin{eqnarray*}
+    (f+g)(x) = f(x)+g(x)
+    &\text{ und }&
+    (\alpha\cdot f)(x)=\alpha\cdot(f(x)). 
+  \end{eqnarray*}
+
+  Man kann auch $\C$ als Vektorraum über $\R$ betrachten.
+  Die Vektoraddition ist die Addition in $\C$
+  und die Skalarmultiplikation ist die Multiplikation
+  mit einem Faktor in $\R$ und dem anderen in $\C$. 
+\end{bspe}
+
+\begin{bemn}
+  Ist $(V, +, \circ)$ ein Vektorraum, dessen Verknüpfungen klar sind,
+  dann sagt man schlicht, dass $V$ ein Vektorraum ist.
+  Das ist bei $\R^n$ klar und auch oft bei Funktionengruppen. 
+\end{bemn}
+
+\begin{defi}
+  \index{Untervektorraum}
+  Sei $K$ ein Körper und $(V,+,\cdot)$ ein $K$-Vektorraum.
+  Eine Teilmenge $U$ von $V$ heißt ein {\em Untervektorraum}, wenn
+  %
+  \begin{itemize}
+  \item
+    $0\in U$ für den Nullvektor $0\in V$ 
+  \item
+    $u+v\in U$ für $u,v\in U$ 
+  \item
+     $\alpha\cdot u\in U$ für $\alpha\in K$, $u\in U$ 
+   \end{itemize}
+   %
+  d.h. man kann die Verknüpfungen auf $U$ einschränken.
+  Damit ist $(U,+,\cdot)$ selbst ein $K$-vektorraum.
+\end{defi}
+
+\begin{defi}
+  \index{Linearkombination}
+  \index{Aufspann}
+  \index{lineare Hülle}
+  Sei $K$ ein Körper, $V$ ein $K$-Vektorraum und $U\subset V$ eine Teilmenge.
+
+  Eine {\em Linearkombination} von Vektoren aus $U$ ist ein Ausdruck
+  %
+  \begin{equation*}
+    \alpha_1\cdot v_1+\ldots+\alpha_n\cdot v_n
+  \end{equation*}
+  %
+  mit $n\in\N_0$, $\alpha_1,\dots,\alpha_n\in K$ und $v_1,\dots,v_n\in U$.
+
+  Der {\em Aufspann} $\spann U$ (die {\em lineare Hülle}) von $U$
+    ist die Menge aller Vektoren,
+  die sich als Linearkombinationen aus $U$ darstellen lassen. 
+
+  Ist $U_I$ eine Familie von Vektoren in $V$,
+  so ist der {\em Aufspann} $\spann U_I$ definiert als $\spann\{u_i|i\in I\}$.
+\end{defi}
+
+\begin{bem}
+  Man beachte, dass Linearkombinationen immer endlich sind,
+  auch wenn unendlich viele Vektoren zur Verfügung stehen.
+  Ausserdem kann eine Linearkombination auch leer sein.
+  Wegen $0=0+x$ steht die leere Linearkombination für den Nullvektor. 
+\end{bem}
+
+
+\begin{lem}
+  Sei $K$ ein Körper, $V$ ein $K$-Vektorraum und $U\subset V$ eine Teilmenge.
+  Der Aufspann $\spann U$ ist der kleinste Unterraum von $V$, der $U$ enthält. 
+\end{lem}
+
+\begin{proof}
+  Erst mal ist klar, dass $U\subseteq \spann U$,
+  denn alle $u\in U$ lassen sich als $1\cdot u\in\spann U$ schreiben.
+  
+  Dann ist auch klar, dass auch $0\in \spann U$ ist,
+  sogar wenn $U$ leer ist, denn dann nimmt man die leere Linearkombination
+  mit $n=0$.
+  Die anderen Eigenschaften eines Unterraumes sind klar.
+
+  Dass $\spann U$ der kleinste derartige Unterraum ist,
+  geht daraus hervor, dass eine Menge die $U$ enthält
+  und ein Untervektorraum ist,
+  auch alle Linearkombinationen enthalten muss. 
+\end{proof}
+
+\begin{defi}
+  \index{linear unabhängig}
+  \index{unabhängig!linear}
+  Sei $K$ ein Körper, $V$ ein $K$-Vektorraum.
+  Eine Teilmenge $U\subset V$ heißt {\em linear unabhängig},
+  wenn für Linearkombinationen 
+  % 
+  \begin{eqnarray*}
+    0&=&\alpha_1\cdot v_1+\ldots+\alpha_n\cdot v_n
+  \end{eqnarray*}
+  %
+  aus $U$ gilt $\alpha_1=\ldots=\alpha_n=0$. 
+\end{defi}
+
+\begin{cor}
+  Sei $K$ ein Körper und $V$ ein $K$-Vektorraum.
+  Eine Teilmenge $U\subset V$ ist linear unabhängig genau dann,
+  wenn sich kein $u\in U$ als Linearkombination anderer Vektoren aus $U$
+  darstellen läßt. 
+\end{cor}
+
+\begin{proof}
+  Sei $U$ linear unabhängig und $u\in U$.
+  Jede Linearkombination $u=\alpha_1\cdot v_1+\ldots+\alpha_n\cdot v_n$
+  aus $U$ mit $v_1,\dots,v_n\not=u$ kann man umformen in 
+  $0=\alpha_1\cdot v_1+\ldots+\alpha_n\cdot v_n+(-1) u$
+  
+  und damit $0=\alpha_1\cdot v_1+\ldots+\alpha_n\cdot v_n+(\alpha-1) u$.
+  Daraus folgt $\alpha_1,\dots,\alpha_n=0$ und $\alpha=1$. 
+\end{proof}
+
+
+\begin{defi}
+  \index{Erzeugendensystem}
+  \index{Basis}
+  Sei $K$ ein Körper, $V$ ein $K$-Vektorraum. 
+  Eine Familie von $U_I$ in $V$ heißt ein {\em Erzeugendensystem}
+  von $V$, wenn $V=\spann U_I$ ist. 
+  Ein unverkürzbares Erzeugendensystem,
+  also eines so dass
+  %
+  \begin{equation*}
+      I'\subsetneq I \implies\spann U_{I'}\subsetneq\spann U_I
+  \end{equation*}
+  %
+  gilt, heißt {\em Basis} von $V$. 
+\end{defi}
+
+\newpage
+
+\section{Grundlagen Analysis}
+\label{sec:anaBasics}
+
+In der Analysis geht es im Wesentlichen um metrische Räume,
+also um Mengen deren Elemente für die ein Abstand,
+eine "`Metrik"' definiert ist,
+sowie um Abbildungen, die diese Abstände "`erhalten"',
+wie die stetigen Abbildungen.
+Genauer definiert man über Abstände die Konvergenz von Folgen
+und stetige Abbildungen sind Abbildungen, die die Konvergenz erhalten. 
+
+Die metrischen Räume der Analysis sind oft auch Vektorräume, 
+die wir in Abschnitt \ref{sec:laBasics} darstellen, 
+so dass sich analytische und algebraische Vorstellungen ergänzen. 
+Die auf Vektorräumen relevanten Metriken sind die Normen.
+
+
+
+
+
+\section{Iterationsalgorithmen}\label{sec:iter}
+
+
+\subsection{Der Banach'sche Fixpunktsatz }
+
+Um nichtlineare Probleme zu lösen, gibt es fast nur Iterationsverfahren.
+Die meisten davon basieren auf dem Banch'schen Fixpunktsatz.
+Um ein Problem dem zugänglich zu machen,
+muss man das Problem erst mal in ein Fixpunktproblem umwandeln.
+Also Beispiel kann man das Nullstellenproblem $f(x)=0$
+ganz naiv in ein Fixpunktproblem umwandeln durch
+$F(x):=x+f(x)=x$: Nullstellen von $f$ sind gerade Fixpunkte von $F$. 
+
+\begin{thm}[Banach'scher Fixpunktsatz]
+  Sei $(X, \|.\|)$ ein vollständiger normierter Raum,
+  $f\colon X\to X$ eine kontrahierende Abbildung mit Faktor $K\in[0, 1)$, d.h.
+  %
+  \begin{equation}\label{eq:contr}
+    \|f(x)-f(x')\| \le K\,\|x-x'\| \qquad\text{für alle } x,x'\in X.     
+  \end{equation}
+
+  Dann konvergiert die Folge $(x_n)_{n\in\N}$
+  definiert durch $x_{n+1}:=f(x_n)$ für $n\in\N$,
+  egal welchen Startpunkt $x_0\in X$ man wählt
+  gegen einen Punkt $\tilde x\in X$.
+
+  Es gilt $f(\tilde x)=\tilde x$, d.h. $\tilde x$ ist Fixpunkt
+  und  sogar der einzige Fixpunkt von $f$.
+
+  Zudem gilt:
+  %
+  \begin{equation}\label{eq:BanachEstApriori}
+    \|\tilde x- x_j\| \le \|x_1-x_0\|\,\frac{K^j}{1-K}
+    \qquad\text{für alle } j\in\N.     
+  \end{equation}
+    %
+  \begin{equation}\label{eq:BanachEstAposteriori}
+    \|\tilde x- x_j\| \le \|x_j-x_{j-1}\|\,\frac{K}{1-K}
+    \qquad\text{für alle } j\in\N.     
+  \end{equation}
+\end{thm}
+
+\begin{bem}[Anwendung: Iterationsverfahren]
+Der Satz klingt schon sehr abstrakt,
+ist aber die Grundlage fast jeden Iterationsverfahrens,
+insbesondere des Newton-Verfahrens.
+
+Wir interpretieren den Satz jetzt in diesem Zusammenhang.
+Wie oben erwähnt,
+muss man das gegebene Problem in ein Fixpunktproblem umwandeln,
+also die Gestalt $f(x)=x$ geben, und zwar für kontrahierendes $f$.
+Die Kontraktion verringert Abstände und führt so zur Konvergenz
+und es ist schon sehr intuitiv, dass der Konvergenzpunkt Fixpunkt ist.
+Angenehm ist, dass der Schätzwert $x_0$
+gar nicht so schlecht sein kann, dass das Verfahren nicht konvergiert. 
+
+Spannend ist auch, dass man abschätzen kann,
+wie weit man vom Fixpunkt noch entfernt ist:
+Ungleichung (\ref{eq:BanachEstApriori}) zeigt, dass der erste Schritt bereits
+eine Abschätzung gibt, wie groß der Fehler im $j$ten Schritt noch ist.
+In aller Regel wendet man aber Gleichung (\ref{eq:BanachEstAposteriori}) an,
+weil man die neuesten Erkenntnisse beim Iterieren nutzen will.
+
+Diese Abschätzungen geben eine Abbruchbedingung für das Iterationsvefahren.
+Ist man sich der Konvergenz nicht sicher,
+sollte man einen Timeout einfügen. 
+\end{bem}
+
+\begin{bem}[Erläuterung]
+  Kontraktion und Lipschitzstetigkeit, C1,
+  Vollständigkeit, Cauchyfolge
+\end{bem}
+
+\begin{bem}[Verallgemeinerungen]
+Die Iterationsfolge $(x_n)_{n\in\N}$
+ist natürlich nur definiert, falls $f$ wieder nach $X$ abbildet.
+Oft wendet man den Satz auch auf eine Teilmenge $X'\subseteq X$ an
+mit $f(X')\subseteq X'$.
+Das folgt nicht aus der Kontraktionseigenschaft,
+sondern muss gesondert nachgewiesen werden.
+Auch muss dann natürlich $x_0\in X'$ sein. 
+
+Streng genommen, muss $X$ kein normierter Raum sein,
+es genügt ein metrischer Raum.
+Wichtig ist nur die Vollständigkeit. 
+\end{bem}
+
+
+\begin{proof}%[Beweis durch Spielerei]
+  Wir schätzen erst mal Abstände benachbarter Folgenglieder ab:
+  %
+  \begin{align*}
+    \|x_2-x_1\| &= \|f(x_1)-f(x_0)\|\le K\,\|x_1-x_0\| \\
+    \|x_3-x_2\| &=  \|f(x_2)-f(x_1)\|\le K\,\|x_2-x_1\|\le K^2\,\|x_1-x_0\| \\
+                & \dots\\
+    \|x_{i+1}-x_i\| &=   K^i\,\|x_1-x_0\|\qquad\text{für alle }i\in\N_0
+  \end{align*}
+
+  Jetzt schätzen wir Abstände beliebiger Folgeglieder ab:
+  Seien $i,j\in\N$ und erst mal $i>j$. Dann gilt
+  %
+  \begin{align*}
+    \|x_i-x_j\| &= \|x_i-x_{i-1}+x_{i-1}+\ldots -x_{j+1}+x_{j+1}-x_j\| \\
+                &= \|x_i-x_{i-1}\|+x_{i-1}+\ldots -x_{j+1}\|+\|x_{j+1}-x_j\| \\
+                &= \sum_{k=j}^{i-1}\|x_k-x_{k-1}\| \\
+                &\overset{s.o.}= \sum_{k=j}^{i-1}K^k\|x_1-x_0\| 
+                = \|x_1-x_0\|K^j\sum_{k=0}^{i-j-1}K^k \\
+                &\overset*= \|x_1-x_0\|K^j\frac{1-K^{i-1}}{1-K} 
+                \le \|x_1-x_0\|K^j\frac1{1-K}.
+  \end{align*}
+  Beim Stern haben wir die Geometrische Reihe benutzt. %****
+  Das gilt offensichtlich für $i=j$ und wegen $\|x_i-x_j\|=\|x_j-x_i\|$
+  auch für $j>i$, also insgesamt für alle $i,j\in\N_0$.
+
+  Diese Abschätzung zeigt, dass $\|x_i-x_j\|$ gegen null geht,
+  wenn nur $i,j$ groß genug sind.
+  Mit anderen Worten, es ist eine Cauchy-Folge.
+  Da $X$ vollständig ist, gibt es einen Grenzwert $\tilde x\in X$
+  und es gilt sogar
+  %
+  \begin{eqnarray*}
+    \|\tilde x-x_j\|=\lim_{i\to\infty}\|x_i-x_j\|
+    &\le& \|x_1-x_0\|K^j\frac1{1-K}.
+  \end{eqnarray*}
+  Das schätzt ab, wie gut die Konvergenz ist.
+
+  Da $f$ Lipschitz-Stetig und damit stetig ist, % ****
+  haben wir
+  % 
+  \begin{align*}
+    f(\tilde x) &=  f(\lim_{i\to\infty}x_i)=\lim_{i\to\infty}f(x_i) \\
+                &= \lim_{i\to\infty}x_{i+1}=\tilde x
+  \end{align*}
+  und somit ist $\tilde x$ ein Fixpunkt.
+
+  Einen weiteren $x'\not=\tilde x$ kann es nicht geben, denn dann wäre
+  %
+  \begin{eqnarray*}
+    \|\tilde x-x'\|=\|f(\tilde x)-f(x')\|&\le& K\|\tilde x-x'\|. 
+  \end{eqnarray*}
+  Aus den Eigenschaften einer Norm $\|.\|$ folgt $\|\tilde x-x'\|\not=0$
+  was zu $1\le K$ führen würde, ein Widerspruch.
+\end{proof}
+
+\printindex
+
+
+\end{document}
