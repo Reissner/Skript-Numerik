@@ -9,6 +9,9 @@
 /*.idx
 /*.pdf
 /*.synctex.gz
+# makeindex
+/*.ilg
+/*.ind
 # bibliography
 /*.bbl
 /*.blg
