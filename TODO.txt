@@ -1,0 +1,11 @@
+Index erweitern 
+bibliographie erweitern 
+
+für Gruppen bis Vektorräumen. 
+- Homomorphismen einführen 
+- Kern und Bild einführen 
+
+Symmetriegruppen einführen, 
+sowie invarianz und äquivarianz 
+
+Symmetrie und Taylorreihen 
