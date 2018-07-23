@@ -78,6 +78,17 @@ mit Grundlagen aus der Linearen Algebra,
 fügen dann in Abschnitt \ref{sec:anaBasics} die Grundlagen aus der Analysis an,
 immer nur das was wir wirklich brauchen.
 
+Mit Abschnitt \ref{sec:arithFail} beginnt die eigentliche Numerik
+und zwar alles was grundlegend ist.
+Das beschränkt sich traditionellerweise auf die Fehlerrechung,
+aber eigentlich gibt es zwei weitere Punkte,
+die bei jeder konkreten Problemstellung relevant sind,
+die verwendete Computer-Arithmetik
+deren Verständnis erst die Fehlerrechnung ermöglicht,
+sowie die Komplexitätstheorie,
+die die Performanz eines Algorithmus misst
+und damit oft über dessen Anwendbarkeit entscheidet. 
+
 Alle weiteren Abschnitte behandeln je ein Thema aus der Numerik.
 Derzeit haben wir nur einen Abschnitt:
 den über Iterationsverfahren.
@@ -86,10 +97,314 @@ den über Iterationsverfahren.
 \section{Grundlagen Mengenlehre}
 \label{sec:setsBasics}
 
-Erst mal geht es da um Mengen, beginnend mit der leeren Menge. 
-Wir sollten da $\N$, $\Z$ und $\Q$ einführen.
-Da gehören auch Relationen dazu.
-Auch Abbildungen und Familien werden gebraucht. 
+Die Mathematik ist im Grunde die Lehre von den Mengen.
+
+Die abstrakte Mengenlehre ist erstaunlich schwierig,
+wir befassen uns aber nur mit den eher einfachen konstruktiven Aspekten.
+
+Intuitiv ist eine Menge eine wohlbestimmte Allgemeinheit von Elementen,
+d.h.~es ist wohlbestimmt, was dazugehört und was nicht.
+Aber was sind die Elemente dieser Mengen?
+Um nicht auf fremde Konzepte zurückgreifen zu müssen,
+können das nur wieder Mengen sein.
+
+Ausgehend von der leeren Menge $\emptyset$, die kein Element enthält,
+d.h.~$x\not\in\emptyset$ für beliebiges $x$
+konstruieren wir eine Folge von Mengen
+%
+\begin{equation*}
+  \emptyset, \{\emptyset\}, \{\{\emptyset\}\}, \{\{\{\emptyset\}\}\}, \dots 
+\end{equation*}
+%
+die die natürlichen Zahlen $\N_0$ bedeuten:
+Man identifiziert diese Reihe mit
+%
+\begin{equation*}
+  0, 1, 2, 3, \dots 
+\end{equation*}
+%
+also ist die Zahl die Anzahl der Schachtelungsebenen
+und $0$ entspricht $\emptyset$ in natürlicher Weise.
+Bei uns ist die $0$ dabei. Will man sie ausschliessen, schreibt man $\N$.
+Eigentlich kann man in den natürlichen Zahlen nur zählen,
+aber das läßt sich leicht zu einer Addition $+$ verallgemeinern
+und daraus wieder eine Multiplikation entwickeln.
+Hingegen sind weder Subtraktion noch Division definiert,
+da man so aus $\N_0$ herausfallen würde. 
+
+
+
+Da fehlen einige Konstruktionen von Mengen, z.B. die Auswahl $\{x|\dots\}$.
+Aber auch vielleicht ganz am Schluss das Auswahlaxiom,
+das eigentlich ein Konstruktionsprinzip ist. 
+
+
+Daraus entwickelt man (siehe unten) die ganzen Zahlen $\Z$,
+die rationalen Zahlen $\Q$,sowie die reellen Zahlen $\R$
+unter der Verwendung von Relationen, genauer äquivalenzrelationen.
+Zuerst aber brauchen wir spezielle Relationen, das Kartesische Produkt,
+das natürlich nichts anderes sein kann als wieder eine Menge.
+
+\begin{defi}
+  Seien $X$ und $Y$ Mengen, dann heißt die Menge $X\times Y$
+  der Paare $(x,y)$ mit $x\in X$ und $y\in Y$
+  das {\em Kartesische Produkt} oder auch {\em Kreuzprodukt} von $X$ und $Y$. 
+\end{defi}
+
+Man kann auch das Kreuzprodukt von mehreren Mengen bilden. 
+
+\begin{defi}
+  Seien $X$ und $Y$ Mengen, dann heißt eine Teilmenge $R\subseteq X\times Y$
+  eine {\em Relation zwischen} $X$ und $Y$\footnote{%
+    Vorsicht: Eine Relation zwischen $X$ und $Y$ ist was anderes
+    als eine  Relation zwischen $Y$ und $X$.}.
+  Stimmen $X$ und $Y$ überein,
+  so spricht man von einer {\em Relation auf} $X$.
+  Statt $(x,y)\in R$ schreibt man $xRy$ und sagt
+  {\em $x$ steht in Relation $R$ zu $y$}\footnote{%
+    Vorsicht: Wiederum ist $xRy$ nicht äquivalent zu $yRx$.}. 
+
+  Ist $R$ eine Relation, so ist die {\em Umkehrrelation} $R^{-1}$ 
+  die Menge aller $(y,x)\in Y\times X$ so dass $(x,y)\in R$ ist.
+  Also $xRy$ genau dann wenn $yR^{-1}x$. 
+
+  Eine Relation $f$ auf heißt {\em Funktion},
+  wenn es zu jedem $x\in X$ genau ein $y\in Y$ gibt mit $xfy$.
+  Man schreibt dann $f\colon X\to Y$ und $f(x)=y$.
+  Ist die Umkehrrelation einer Funktion wiederum eine Funktion,
+  so heißt sie {\em Umkehrfunktion} $f^{-1}$. 
+\end{defi}
+
+\begin{bspe}
+  Seien $X$ und $Y$ Mengen.
+  Dann gibt es u.a. folgende Beispiele für Relationen:
+  %
+  \begin{itemize}
+  \item
+    Die leere Relation $\emptyset\subseteq X\times Y$ 
+  \item
+    Die Gleichheitsrelation $\{(x,x)|x\in X$ ist eine Relation auf $X$.
+  \item
+    Für $X=\R$ ist $\{(x^2,x)|x\in\R\}$ eine Relation,
+    aber auch $\{(x,y)|x,y\in\R x<y\}$
+  \end{itemize}
+\end{bspe}
+
+
+\begin{defi}
+  Sei $f\colon X\to Y$ eine Funktion.
+  %
+  \begin{itemize}
+  \item
+    Für $X'\subseteq X$ heißt $f(X')=\{f(x)|x\in X'\}$
+    das {\em Bild} von $X'$ unter $f$.
+  \item
+    Für $Y'\subseteq Y$ heißt $f^{-1}(Y')=\{x\in X|f(x)\in Y'\}$
+    das {\em Urbild} von $Y'$ unter $f$.
+  \end{itemize}
+\end{defi}
+
+\begin{defi}
+  Eine Funktion $f\colon X\to Y$ heißt
+  %
+  \begin{itemize}
+  \item
+    {\em injektiv}, wenn aus $f(x)=f(x')$ für $x,x'\in X$ folgt $x=x'$.
+  \item
+    {\em surjektiv}, falls es zu jedem $y\in Y$ ein $x\in X$ gibt mit $f(x)=y$. 
+  \item
+    {\em bijektiv} oder auch {\em umkehrbar},
+    falls $f$ injektiv und surjektiv ist. 
+  \end{itemize}
+\end{defi}
+
+\begin{bem}
+  Surjektivität von $f$ bedeutet, dass es zu jedem $y\in Y$ ein Urbild gibt,
+  Injektivität dass das Urbild, wenn es existiert eindeutig ist.
+  Bijektivität bedeutet, dass das Urbild exsitiert und eindeutig ist.
+  Das wiederum heisst, dass die Umkehrrelation der Funktion $f$
+  wiederum eine Funktion ist.
+  Das ist es was man mit Umkehrbarkeit meint. 
+
+  Bild und auch Urbild existiert ob $f$ umkehrbar ist oder nicht. 
+\end{bem}
+
+\begin{defi}
+  Seien $X$ und $I$ Mengen. 
+  Eine {\em Familie} $(x_i)_{i\in I}$ in $X$ mit Indexmenge $I$
+  ist eine Abbildung $I\to X$.
+  Die Elemente von $I$ heißen {\em Indices}. 
+\end{defi}
+
+\begin{bem}
+  Bis auf die Sichtweise sind Familien einfach nur Abbildungen.
+  Wir verwenden den Begriff Familie im Zusammenhang mit Basen u.Ä.
+  Die Indexmenge ist bei endlich-dimensionalen Vektorräumen einfach nur
+  $\{1,\dots,n\}$ für $n\in\N_0$ und $X$ ist ein Vektorraum (siehe unten). 
+\end{bem}
+
+
+
+Obwohl Ordnungsrelation $\le$ in der Mathematik eine große Rolle spielen,
+verzichten wir hier auf deren strikte Definition,
+zumal die Materie umfangreich ist.
+Interessant wären auch die ordnungserhaltenden Abbildungen $f$,
+die monotonen, für die informell gilt $x\le y\implies f(x)\le f(y)$. 
+
+Äquivalenzrelationen hingegen sind absolut notwendig. 
+
+
+\begin{defi}
+  Sei $X$ eine Menge.
+  Eine Relation $\sim$ auf $X$ heißt {\em Äquivalenzrelation},
+  wenn gelten:
+  %
+  \begin{itemize}
+  \item
+    $x\sim x$ für alle $x\in X$ (Reflexivität) 
+  \item
+    $x\sim y$ wenn $y\sim x$ für alle $x,y\in X$ (Symmetrie) 
+  \item
+    Aus $x\sim y$ und $y\sim z$  für $x,y,z\in X$ folgt $x\sim z$
+    (Transitivität). 
+  \end{itemize}
+\end{defi}
+
+
+\begin{bspe}
+  Das Paradebeispiel für eine Äquivalenzrelation ist die Gleichheit.
+  Eigentlich bedeutet Äquivalenz immer eine Art Gleichheit
+  bis auf irrelevante Details.
+
+  Auf $\R^n\setminus\{0\}$, der Menge der Richtungsvektoren
+  kann man durch eine Äquivalenzrelation definieren,
+  indem man $x\sim y$ schreibt, wenn es ein $\lambda\in\R$ gibt
+  mit $\lambda x=y$ (man beachte $\lambda\not=0$).
+  Eine andere Relation ergibt sich, wenn man $\lambda>0$ fordert.
+
+  Die Gleichheit von Brüchen bis auf Kürzen oder
+  Erweitern geht in die gleiche Richtung.
+\end{bspe}
+
+\begin{bsp}\label{bsp:equiv1}
+  Ein Beispiel das sich als sehr interessant herausstellt ist das folgende:
+  Ist $f\colon X\to Y$ dann definiert $x\sim x'\iff f(x)=f(x')$
+  eine Äquivalenzrelation.
+  So wird Äquivalenz auf Gleichheit zurückgeführt. 
+\end{bsp}
+
+\begin{defi}
+  Sei $X$ eine Menge versehen mit einer Äquivalenzrelation $\sim$.
+  Zu $x\in X$ sei die {\em Äquivalenzklasse} definiert durch
+  %
+  \begin{eqnarray*}
+    [x]_\sim & = & \{y\in X| y\sim x\}. 
+  \end{eqnarray*}
+  %
+  Jedes Element einer Äquivalenzklasse heißt ein {\em Repräsentant}. 
+
+  Die Menge der Äquivalenzklassen $X/\sim$
+  sei als {\em Quotientenmenge} bezeichnet.
+
+  Die {\em Quotientenabbildung} ist definiert durch 
+  % 
+  \begin{eqnarray*}
+    q\colon X & \to & X/\sim \\
+    q(x)      & =   & [x]_\sim
+  \end{eqnarray*}
+\end{defi}
+
+
+\begin{cor}\label{cor:equiv1}
+  Sei $X$ eine Menge mit Äquivalenzrelation $\sim$
+  und Quotientenabbildung $q$.
+  Dann gilt für alle $x,x'\in X$
+  %
+  \begin{eqnarray*}
+    x\sim x\ & \iff & f(x)=f(x')
+  \end{eqnarray*}
+\end{cor}
+
+\begin{bem}
+Das Ergebnis zeigt,
+dass Äquivalenz in $X$ der Gleichheit in $X/\sim$ entspricht.
+Während in Beispiel \ref{bsp:equiv1}
+die Äquivalenz durch Gleichheit eines Funktionenwertes
+noch als Spezialfall erscheint,
+zeigt Korollar \ref{cor:equiv1}
+dass sich alle Äquivalenzen so interpretieren lassen. 
+\end{bem}
+
+
+
+Wir sollten da ausgehend von $\N$
+schrittweise die Mengen $\Z$ und $\Q$ einführen. 
+Einen besonderen Reiz hat $\R$, aber diese Konstruktion kann man nur andeuten. 
+
+\begin{defi}
+  Auf $\N_0\times\N_0$ sei die folgende Äquivalenz definiert. 
+  %
+  \begin{eqnarray*}
+    (p,n)\sim(p',n') & \iff & p+n' = p'+n
+  \end{eqnarray*}
+
+  Jede Äquivalenzklasse hat genau einen Repräsentanten
+  der Form $(p,0)$ oder $(0,n)$.
+  Wir schreiben $[(p,0)]=p$, $[(0,n)]=-n$ und speziell $[(0,0)]=0$. 
+  Damit ist die Menge der ganzen Zahlen $\Z$ als $(\N_0\times\N_0)/\sim$
+  definiert.
+
+  Addition und Multiplikation sind repräsentantenweise definiert:
+  %
+  \begin{eqnarray*}
+    [(p,n)]_\sim+    [(p',n')]_\sim
+    & = &
+          [(p,n)+(p',n')]_\sim= [(p+p',n+n')]_\sim\\{}
+    [(p,n)]_\sim\cdot[(p',n')]_\sim
+    & = &
+          [(p,n)\cdot(p',n')]_\sim= [(p\cdot p',n\cdot n')]_\sim\\
+  \end{eqnarray*}
+\end{defi}
+
+\begin{bem}
+  Hier erhebt sich die Frage, ob Addition und Multiplikation wohldefiniert sind,
+  also unabhängig vom Repräsentanten.
+  Zu zeigen ist einfach, dass das Ergebnis bis auf Äquivalenz
+  nicht vom Repräsentanten abhängt. 
+\end{bem}
+
+\begin{defi}
+  Auf $\Z\times(\Z\setminus\{0\})$ sei die folgende Äquivalenz definiert. 
+  %
+  \begin{eqnarray*}
+    (z,n)\sim(z',n') & \iff & z\cdot n' = z'\cdot n
+  \end{eqnarray*}
+
+  Damit ist die Menge der rationalen Zahlen $\Q$ als
+  $(\Z\times(\Z\setminus\{0\}))/\sim$ definiert.
+  Wir notieren $[(z,n)]$ als $\frac zn$. 
+  Zu je zwei Klassen gibt es Repräsentanten so dass die Nenner gleich sind:
+  $\frac zn$ und  $\frac{z'}n$. 
+
+  Addition und Multiplikation sind repräsentantenweise definiert:
+  %
+  \begin{eqnarray*}
+    [(z,n)]_\sim+    [(z',n)]_\sim
+    & = &
+          [(z+z',n)]_\sim\\{}
+    [(z,n)]_\sim\cdot[(z',n')]_\sim
+    & = &
+          [(z,n)\cdot(z',n')]_\sim= [(z\cdot z',n\cdot n')]_\sim\\
+  \end{eqnarray*}
+\end{defi}
+
+\begin{bem}
+  Ausgehend von $\Q$ sind die reellen Zahlen $\R$ auch als Äquivalenzklassen
+  definiert.
+  Genaueres in Abschnitt .... 
+\end{bem}
+
+
 
 \section{Grundlagen Lineare Algebra}
 \label{sec:laBasics}
@@ -209,7 +524,12 @@ die einen Schiefkörper aber keinen Körper bilden.
   
   Das inverse des neutralen Elements ist das neutrale Element selbst.
   Auch das inverse Element ist eindeutig bestimmt.
-  %Das linksinverse ist gleich dem rechtsinversen. 
+  % Das linksinverse ist gleich dem rechtsinversen.
+
+  Man kann von linksneutralem und von rechtsneutralem Element sprechen,
+  genauso von linksinversem und rechtsinversem.
+  Es stellt sich aber heraus, dass das linksneutrale auch rechtsneutral ist
+  und umgekehrt, und dass entsprechendes für die inversen gilt. 
 \end{bem}
 
 \begin{bspe}
@@ -251,7 +571,7 @@ die einen Schiefkörper aber keinen Körper bilden.
     \end{eqnarray*}
     dann ist auch $(F(X, R^n), +)$ eine Gruppe. 
   \item
-    Ist $G$ die Menge der Funktionen $X\to X$,
+    Ist $G$ die Menge der invertierbaren Abbildungen $X\to X$,
     wobei $X$ eine beliebige Menge sei, und bezeichne $\circ$
     die Hintereinanderaussführung,
     dann bildet $(G, \circ)$ eine Gruppe,
@@ -262,11 +582,123 @@ die einen Schiefkörper aber keinen Körper bilden.
 \end{bspe}
 
 
+
 \begin{bem}
   Ist $(G, \circ)$ eine Gruppe, deren Verknüpfung klar ist,
   dann sagt man schlicht, dass $G$ eine Gruppe ist.
   Das ist bei $\R^n$ klar und auch oft bei Funktionengruppen. 
 \end{bem}
+
+
+\begin{defi}
+  Sei $(G,\cdot)$ eine Gruppe.
+  Ist $U\subseteq G$ eine Teilmenge von $G$ mit
+  %
+  \begin{itemize}
+  \item
+    $u\cdot u'\in U$ für alle $u,u'\in U$ (abgeschlossen unter $\cdot$)
+  \item
+    $1\in U$ für das neutrale Element $1\in G$ 
+  \item
+    $u^{-1}\in U$ für alle $u\in U$ (abgeschlossen unter Inversion)
+  \end{itemize}
+  %
+  Dann heißt $(U,\cdot)$ eine {\em Untergruppe} von $(G, \cdot)$. 
+\end{defi}
+
+\begin{bem}
+  Untergruppen sind selbst wieder Gruppen. 
+\end{bem}
+
+\begin{bsp}
+  Folgende Beispiele von Untergruppen sind allgemein bekannt:
+  %
+  \begin{itemize}
+  \item
+    $(\Z,+)$, $(\Q,+)$, $(\R,+)$ und $(\C,+)$
+    bildet eine aufsteigende Reihe von Untergruppen 
+  \item
+    Ist $G$ die Menge der invertierbaren Abbildungen $X\to X$
+    und ist $M$ eine Teilmenge von $X$.
+    Dann ist die Menge $G_U$ der Abbildungen $f\in G$,
+    die $M$ punktweise festlassen,
+    also für die gilt $f(u)=u$ für alle $u\in U$,
+    eine Untergruppe von $(G,\circ)$.
+    Diese Gruppe heißt Symmetriegruppe von $M$.
+
+    Man kann auch Symmetrien von Funktionen definieren.
+    So bildet die Menge der Invarianzen einer Funktion auch eine Gruppe.
+    Leider braucht man zur vollen Beschreibung
+    den Begriff der Aktion einer Gruppe.
+
+    Wir können aber auch eine Funktion $f\colon G\to X$
+    mit Gruppe $(G,\cdot)$ und Menge $X$ betrachten
+    und die Menge $U$ der $g\in G$ mit $f(g\cdot g')=f(g')$ für alle $g'\in G$.
+    Dann bildet $U$ eine Untergruppe von $G$. 
+  \end{itemize}
+\end{bsp}
+
+\begin{defi}
+  Seien $(G_1,\circ_1)$ und $(G_2,\circ_2)$ Gruppen.
+  Eine Abbildung
+  %
+  \begin{eqnarray*}
+    f\colon G_1 & \to & G_2 \\
+  \end{eqnarray*}
+  %
+  heißt {\em Gruppenhomomorphismus},
+  wenn für alle $g,g'\in G$ gilt
+  %
+  \begin{eqnarray*}
+    f(g\circ_1g') & = & f(g)\circ_2f(g').
+  \end{eqnarray*}
+  Man schreibt dann $f\colon(G_1,\circ_1)\to(G_2,\circ_2)$.
+
+  Der {\em Range} von $f$ ist einfach das Bild $f(G_1)\subseteq G_2$
+  und der {\em Kern} ist die Menge $f^{-1}(G_2)\subseteq G_1$. 
+\end{defi}
+
+\begin{bem}
+  Intuitiv gesprochen bedeutet das,
+  dass $f$ entsprechende Teile von $G_1$ auf $G_2$ abbildet
+  und dass sich die Verknüpfung von $g$ und $g'$ mit $\circ_1$
+  der  Verknüpfung von $f)g)$ und $f(g')$ mit $\circ_2$ entsprechen.
+  In diese Richtung weist auch Korollar \ref{cor:homNeuInv}. 
+\end{bem}
+
+
+\begin{cor}\label{cor:homNeuInv}
+  Seien $(G_1,\circ_1)$ und $(G_2,\circ_2)$ Gruppen.
+  Dann gilt für jeden Gruppenhomomorphismus
+  $f\colon(G_1,\circ_1)\to(G_2,\circ_2)$:
+  %
+  \begin{itemize}
+  \item
+    Ist $1_1\in G_1$ das neutrale Element in $G_1$,
+    so ist $f(1_1)\in G_2$ das neutrale Element in $G_2$.
+  \item
+    Für $g\in G_1$ gilt $f(g^{-1})=f(g)^{-1}$,
+    d.h. $f$ bildet Inverse auf Inverse ab. 
+  \end{itemize}
+\end{cor}
+
+\begin{cor}
+  Ist  $f\colon(G_1,\circ_1)\to(G_2,\circ_2)$ ein Gruppenhomomorphismus,
+  so ist der Kern von $f$ eine Untergruppe von $G_1$
+  und der Range von $f$ eine Untergruppe von $G_2$.
+
+  Desweiteren ist $f$
+  %
+  \begin{itemize}
+  \item 
+    injektiv genau dann wenn 
+  \item
+    surjektiv genau dann wenn 
+  \end{itemize}
+
+\end{cor}
+
+
 
 
 \begin{defi}
@@ -571,7 +1003,8 @@ so dass sich analytische und algebraische Vorstellungen ergänzen.
 Die auf Vektorräumen relevanten Metriken sind die Normen.
 
 
-
+\section{Computerarithmetik, Fehlerrechnung und Komplexität}
+\label{sec:arithFail}
 
 
 \section{Iterationsalgorithmen}\label{sec:iter}
